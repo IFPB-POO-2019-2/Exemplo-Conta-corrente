@@ -1,5 +1,8 @@
 package com.ifpb.banco.modelo;
 
+import com.ifpb.banco.excecoes.SaldoInsuficienteException;
+import com.ifpb.banco.excecoes.ValorInvalidoException;
+
 /**
 Essa classe modela uma conta corrente de um <b>banco</b>, simulando os
  serviços comuns dessa entidade.
@@ -50,30 +53,34 @@ public class ContaCorrente {
      * @param valor o valor a ser depositado
      * @return a confirmação do depósito
      */
-    public boolean depositar(float valor){
+    public boolean depositar(float valor)
+            throws ValorInvalidoException{
         if(valor < 0){
-            return false;
+            throw new ValorInvalidoException(
+                    "Valor menor que zero");
         }else{
             saldo += valor;
             return true;
         }
     }
 
-    public boolean sacar(float valor){
+    public boolean sacar(float valor)
+            throws SaldoInsuficienteException, ValorInvalidoException{
         if(valor > saldo){
-            return false;
+            throw new SaldoInsuficienteException(
+                    "O valor é maior que o saldo");
+        }else if(valor < 0){
+            throw new ValorInvalidoException(
+                    "O valor é menor que zero");
         }else{
             saldo -= valor;
             return true;
         }
     }
 
-    public boolean transferir(ContaCorrente destino, float valor){
-        if(valor > saldo){
-            return false;
-        }else{
+    public boolean transferir(ContaCorrente destino, float valor)
+        throws ValorInvalidoException, SaldoInsuficienteException{
             return sacar(valor) && destino.depositar(valor);
-        }
     }
 
 }
